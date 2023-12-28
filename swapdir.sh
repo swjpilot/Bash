@@ -1,5 +1,14 @@
 #!/bin/bash
-declare -a args()
+function print_usage() {
+  printf '-m   Send Setting to Missy Linux'
+  printf '-t   Send Setting to Theo Linux'
+  printf '-l   Send Setting to Both Linux Systems'
+  printf '-w   Send Setting to Both Windows Systems'
+  printf '-o   Send Setting to Missy Windows'
+  printf '-g   Send Setting to Theo Windows'
+  printf '-a   Send Setting to All Systems'
+}
+args=()
 while getopts 'mtlwoga' flag; do
   case "${flag}" in
     m) args+="missy" ;;
@@ -50,14 +59,15 @@ do
     args=""
     if [ -d $dir$apath ]; then
         case $(echo $dir | rev | cut -d "/" -f1 | rev) in
-            missy) read -p "Settings found already for missy would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="missy"; found="true" ||  ;;
-            theo) read -p "Settings found already for theo would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="theo"; found="true" ||  ;;
-            linux) read -p "Settings found already for linux would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="linux"; found="true" ||  ;;
-            windows) read -p "Settings found already for windows would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="windows"; found="true" ||  ;;
-            theo-win) read -p "Settings found already for theo windows would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="theo-win"; found="true" ||  ;;
-            missy-win) read -p "Settings found already for missy windows would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="missy-win"; found="true" ||  ;;
-            all-sys) read -p "Settings found already for all systems would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="all-sys"; found="true" ||  ;;
+            missy) read -p "Settings found already for missy would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="missy"; found="true" || continue ;;
+            theo) read -p "Settings found already for theo would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="theo"; found="true" || continue ;;
+            linux) read -p "Settings found already for linux would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="linux"; found="true" || continue ;;
+            windows) read -p "Settings found already for windows would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="windows"; found="true" || continue ;;
+            theo-win) read -p "Settings found already for theo windows would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="theo-win"; found="true" || continue ;;
+            missy-win) read -p "Settings found already for missy windows would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="missy-win"; found="true" || continue ;;
+            all-sys) read -p "Settings found already for all systems would you like to use those settings? (Y)" confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; args+="all-sys"; found="true" || continue ;;
         esac
+    fi
 done
 if [[ "$found" = "true" ]]; then
     printf "Multiple Settings folders have been found for that location which one do you want to link to?"
@@ -73,7 +83,7 @@ if [[ "$found" = "true" ]]; then
         printf "$(ls-lah $apath$afile)"
         exit 1
     fi
-    sudo rm -rf $apath$file
+    if [[ -d $setting ]]; sudo rm -rf $apath || sudo rm -rf $apath$file;
     sudo ln -s $HOME/Nextcloud/Settings/$loc$apath$file $apath$file
     sudo chown -R $user:$user $HOME/Nextcloud/Settings/$loc$apath$file
     sudo chown -R $user:$user $apath$file
@@ -103,13 +113,3 @@ do
     printf "$setting config dir has been linked up\n"
 done
 exit 0
-
-print_usage() {
-  printf "-m   Send Setting to Missy Linux"
-  printf "-t   Send Setting to Theo Linux"
-  printf "-l   Send Setting to Both Linux Systems"
-  printf "-w   Send Setting to Both Windows Systems"
-  printf "-o   Send Setting to Missy Windows"
-  printf "-g   Send Setting to Theo Windows"
-  printf "-a   Send Setting to All Systems"
-}
