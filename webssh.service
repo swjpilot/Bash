@@ -1,0 +1,13 @@
+[Unit]
+Description=WebSSH
+
+[Service]
+RemainAfterExit=yes
+ExecStart=/etc/webssh.sh start
+ExecRestart=/etc/webssh.sh restart
+ExecStop=/etc/webssh.sh stop
+user=root
+group=root
+
+[Install]
+WantedBy=multi-user.target
